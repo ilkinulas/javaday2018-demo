@@ -31,21 +31,6 @@ dependencies {
     testCompile group: 'org.testcontainers', name: 'testcontainers', version: '1.6.0'
 }
 
-test {
-//    useJUnit {
-//        excludeCategories 'net.ilkinulas.IntegrationTest'
-//    }
-    useTestNG()
-    maxParallelForks = 4
-}
-
-task integrationTest(type: Test) {
-    useTestNG {
-//        includeCategories 'net.ilkinulas.IntegrationTest'
-    }
-    maxParallelForks = 4
-}
-
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
