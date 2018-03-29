@@ -37,3 +37,29 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+task duplicateTests {
+    doLast {
+        println "duplicating tests $numTests"
+        (1..Integer.parseInt(numTests)).each { test_counter   ->
+            println "Test_$test_counter"
+            copy {
+                from 'src/test/kotlin/net/ilkinulas/redis'
+                into 'src/test/kotlin/net/ilkinulas/redis'
+                filter {
+                    it.replaceAll('class RedisQueueTest', 'class RedisQueueTest' + test_counter)
+                }
+                filter {
+                    it.replaceAll('class KGenericContainer.*', '')
+                }
+                rename 'RedisQueueTest.kt', 'RedisQueueTest' + test_counter + '.kt'
+                include 'RedisQueueTest.kt'
+            }
+        }
+    }
+}
+
+test {
+    maxParallelForks = Runtime.runtime.availableProcessors()
+}

@@ -1,7 +1,8 @@
+package net.ilkinulas.redis
+
 import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
-import net.ilkinulas.redis.RedisQueue
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.ClassRule
