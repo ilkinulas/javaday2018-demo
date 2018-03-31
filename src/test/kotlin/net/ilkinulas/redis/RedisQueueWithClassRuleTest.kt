@@ -4,28 +4,31 @@ import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
 import org.junit.Before
-import org.junit.Rule
+import org.junit.BeforeClass
+import org.junit.ClassRule
 import org.junit.Test
-import org.testcontainers.containers.GenericContainer
 
-class KGenericContainer(image: String) : GenericContainer<KGenericContainer>(image)
-
-class RedisQueueTest {
+class RedisQueueWithClassRuleTest {
     companion object {
         private const val REDIS_PORT = 6379
         private const val TEST_QUEUE_NAME = "test-queue-1"
+
+        @ClassRule
+        @JvmField
+        val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
+
+        private lateinit var queue: RedisQueue
+
+        @BeforeClass
+        @JvmStatic
+        fun setUpClass() {
+            val port = redisServer.getMappedPort(REDIS_PORT)
+            queue = RedisQueue(host = "localhost", port = port, queue = TEST_QUEUE_NAME)
+        }
     }
-
-    private lateinit var queue: RedisQueue
-
-    @Rule
-    @JvmField
-    val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
 
     @Before
     fun setUp() {
-        val port = redisServer.getMappedPort(REDIS_PORT)
-        queue = RedisQueue(host = "localhost", port = port, queue = TEST_QUEUE_NAME)
         queue.deleteQueue(TEST_QUEUE_NAME)
     }
 

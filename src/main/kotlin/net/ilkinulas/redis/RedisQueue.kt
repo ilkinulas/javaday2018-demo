@@ -3,7 +3,6 @@ package net.ilkinulas.redis
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
-import redis.clients.jedis.exceptions.JedisConnectionException
 
 interface Queue {
     fun poll(): String?
@@ -26,14 +25,7 @@ class RedisQueue(
     init {
         val poolConfig = JedisPoolConfig()
         pool = JedisPool(poolConfig, host, port)
-        try {
-            pool.resource.use {
-                it.ping()
-            }
-        } catch (e: JedisConnectionException) {
-            logger.error("Can not connect to redis on $host:$port")
-            throw e
-        }
+        logger.info("RedisQueue is ready. Connected to $host:$port")
     }
 
     override fun poll(): String? {
@@ -51,7 +43,6 @@ class RedisQueue(
             return response.get()
         }
     }
-
 
     override fun size() = pool.resource.use { it.llen(queue) }
 
