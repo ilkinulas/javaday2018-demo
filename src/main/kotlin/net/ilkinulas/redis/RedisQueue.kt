@@ -10,6 +10,7 @@ interface Queue {
     fun size(): Long
     fun add(s: String): Long
     fun add(l: List<String>): Long
+    fun clear()
     fun close()
 }
 
@@ -58,13 +59,14 @@ class RedisQueue(
         }
     }
 
+    override fun clear() {
+        pool.resource.use {
+            it.del(queue)
+        }
+    }
+
     override fun close() {
         pool.close()
     }
 
-    fun deleteQueue(qname: String) {
-        pool.resource.use {
-            it.del(qname)
-        }
-    }
 }

@@ -7,6 +7,7 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.ClassRule
 import org.junit.Test
+import org.testcontainers.containers.wait.Wait
 
 class RedisQueueWithClassRuleTest {
     companion object {
@@ -16,6 +17,7 @@ class RedisQueueWithClassRuleTest {
         @ClassRule
         @JvmField
         val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
+                .waitingFor(Wait.forListeningPort())
 
         private lateinit var queue: RedisQueue
 
@@ -29,7 +31,7 @@ class RedisQueueWithClassRuleTest {
 
     @Before
     fun setUp() {
-        queue.deleteQueue(TEST_QUEUE_NAME)
+        queue.clear()
     }
 
     @Test

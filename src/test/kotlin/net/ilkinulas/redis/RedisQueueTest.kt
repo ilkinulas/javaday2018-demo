@@ -6,9 +6,7 @@ import junit.framework.TestCase.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.testcontainers.containers.GenericContainer
-
-class KGenericContainer(image: String) : GenericContainer<KGenericContainer>(image)
+import org.testcontainers.containers.wait.Wait
 
 class RedisQueueTest {
     companion object {
@@ -21,12 +19,13 @@ class RedisQueueTest {
     @Rule
     @JvmField
     val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
+            .waitingFor(Wait.forListeningPort())
 
     @Before
     fun setUp() {
         val port = redisServer.getMappedPort(REDIS_PORT)
         queue = RedisQueue(host = "localhost", port = port, queue = TEST_QUEUE_NAME)
-        queue.deleteQueue(TEST_QUEUE_NAME)
+        queue.clear()
     }
 
     @Test
@@ -91,5 +90,18 @@ class RedisQueueTest {
         TestCase.assertEquals(2, res.size)
         TestCase.assertEquals(0, queue.size())
         assertEquals(listOf("test1", "test2"), res)
+    }
+
+    @Test
+    fun test_containers_without_rules() {
+        KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT).use {
+            it.start()
+            val queue = RedisQueue("localhost", it.getMappedPort(REDIS_PORT), TEST_QUEUE_NAME)
+            queue.clear()
+
+            queue.add((1..10).map { it.toString() })
+            assertEquals((1..8).map { it.toString() }, queue.poll(8))
+            assertEquals(listOf("9", "10"), queue.poll(100))
+        }
     }
 }
