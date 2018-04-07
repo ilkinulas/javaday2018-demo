@@ -18,6 +18,8 @@ class RedisQueueTest {
     @Rule
     @JvmField
     val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
+    //docker run --name redis-queue-test -d --rm -p 6379 redis:4.0.8-alpine
+    //docker stop $container_id
 
     @Before
     fun setUp() {
@@ -27,7 +29,7 @@ class RedisQueueTest {
     }
 
     @Test
-    fun test_polcl_multiple_items() {
+    fun test_poll_multiple_items() {
         queue.add((1..100).map { it.toString() })
 
         TestCase.assertEquals(listOf("1"), queue.poll(1))
