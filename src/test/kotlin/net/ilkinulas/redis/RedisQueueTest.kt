@@ -6,7 +6,6 @@ import junit.framework.TestCase.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.testcontainers.containers.wait.Wait
 
 class RedisQueueTest {
     companion object {
@@ -19,7 +18,6 @@ class RedisQueueTest {
     @Rule
     @JvmField
     val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
-            .waitingFor(Wait.forListeningPort())
 
     @Before
     fun setUp() {
@@ -29,7 +27,7 @@ class RedisQueueTest {
     }
 
     @Test
-    fun test_poll_multiple_items() {
+    fun test_polcl_multiple_items() {
         queue.add((1..100).map { it.toString() })
 
         TestCase.assertEquals(listOf("1"), queue.poll(1))

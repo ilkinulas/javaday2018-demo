@@ -11,7 +11,6 @@ interface Queue {
     fun add(s: String): Long
     fun add(l: List<String>): Long
     fun clear()
-    fun close()
 }
 
 private val logger = LoggerFactory.getLogger(RedisQueue::class.java)
@@ -19,7 +18,7 @@ private val logger = LoggerFactory.getLogger(RedisQueue::class.java)
 class RedisQueue(
         host: String = "localhost",
         port: Int = 6379,
-        private val queue: String) : Queue {
+        private val queue: String) : Queue, AutoCloseable {
 
     private var pool: JedisPool
 
