@@ -92,7 +92,7 @@ class RedisQueueTest {
         assertEquals(listOf("test1", "test2"), res)
     }
 
-    @Test
+    //@Test
     fun test_containers_without_rules() {
         KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT).use {
             it.start()
