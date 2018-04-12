@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import redis.clients.jedis.JedisPool
 import redis.clients.jedis.JedisPoolConfig
 
+
 interface Queue {
     fun poll(): String?
     fun poll(count: Long): List<String>
@@ -68,4 +69,11 @@ class RedisQueue(
         pool.close()
     }
 
+    fun poplua(count: Long): List<String> {
+        val script = RedisQueue::class.java.classLoader.getResource("lpopn.lua").readText()
+        pool.resource.use {
+            val result = it.eval(script, 1, queue, count.toString()) ?: return emptyList()
+            return (result as ArrayList<*>).map { it.toString() }
+        }
+    }
 }

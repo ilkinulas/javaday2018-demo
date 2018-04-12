@@ -104,4 +104,27 @@ class RedisQueueTest {
             assertEquals(listOf("9", "10"), queue.poll(100))
         }
     }
+
+    @Test
+    fun test_pop_lua_script() {
+        queue.add((1..100).map { it.toString() })
+
+        TestCase.assertEquals(listOf("1"), queue.poplua(1))
+
+        with(queue) {
+            TestCase.assertEquals(listOf("2", "3", "4", "5", "6"), poplua(5))
+            TestCase.assertEquals(94, size())
+        }
+        with(queue) {
+            val l = poplua(90)
+            TestCase.assertEquals(90, l.size)
+            TestCase.assertEquals("7", l[0])
+            TestCase.assertEquals("96", l[l.size - 1])
+            TestCase.assertEquals(4, size())
+        }
+        with(queue) {
+            TestCase.assertEquals(listOf("97", "98", "99", "100"), poplua(10))
+            TestCase.assertTrue(poplua(1).isEmpty())
+        }
+    }
 }

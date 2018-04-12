@@ -38,6 +38,14 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+sourceSets {
+    test {
+        resources {
+            srcDirs = ['src/main/lua', 'src/test/resources']
+        }
+    }
+}
+
 
 task duplicateTests {
     doLast {
