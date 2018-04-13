@@ -9,8 +9,8 @@ import org.junit.Test
 
 class RedisQueueTest {
     companion object {
-        private const val REDIS_PORT = 6379
-        private const val TEST_QUEUE_NAME = "test-queue-1"
+        const val REDIS_PORT = 6379
+        const val TEST_QUEUE_NAME = "test-queue-1"
     }
 
     private lateinit var queue: RedisQueue
@@ -18,7 +18,7 @@ class RedisQueueTest {
     @Rule
     @JvmField
     val redisServer = KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT)
-    //docker run --name redis-queue-test -d --rm -p 6379 redis:4.0.8-alpine
+    //docker run -d --rm -p 6379 redis:4.0.8-alpine
     //docker stop $container_id
 
     @Before
@@ -90,19 +90,6 @@ class RedisQueueTest {
         TestCase.assertEquals(2, res.size)
         TestCase.assertEquals(0, queue.size())
         assertEquals(listOf("test1", "test2"), res)
-    }
-
-    //@Test
-    fun test_containers_without_rules() {
-        KGenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT).use {
-            it.start()
-            val queue = RedisQueue("localhost", it.getMappedPort(REDIS_PORT), TEST_QUEUE_NAME)
-            queue.clear()
-
-            queue.add((1..10).map { it.toString() })
-            assertEquals((1..8).map { it.toString() }, queue.poll(8))
-            assertEquals(listOf("9", "10"), queue.poll(100))
-        }
     }
 
     @Test
