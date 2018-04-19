@@ -1,8 +1,7 @@
-package net.peakgames.redis;
+package net.ilkinulas.redis;
 
-import net.ilkinulas.redis.RedisQueue;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
@@ -19,10 +18,9 @@ public class RedisQueueTest {
 
     private RedisQueue queue;
 
-    @Rule
-    public GenericContainer redisServer =
-            new GenericContainer("redis:4.0.8-alpine").withExposedPorts(REDIS_PORT);
-    //docker run -d --rm -p 6379 redis:4.0.8-alpine
+    @ClassRule
+    public static GenericContainer redisServer = new GenericContainer("redis:4.0.8-alpine");
+    //docker run -d --rm --publish-all redis:4.0.8-alpine
     //docker stop $container_id
 
     @Before
@@ -75,7 +73,8 @@ public class RedisQueueTest {
         assertEquals(3, res.size());
         assertEquals(2, queue.size());
 
-        queue.add(Arrays.asList("a", "b", "c"));
+        long len = queue.add(Arrays.asList("a", "b", "c"));
+        assertEquals(5, len);
         res = queue.poll(3);
         assertEquals(Arrays.asList("4", "5", "a"), res);
     }

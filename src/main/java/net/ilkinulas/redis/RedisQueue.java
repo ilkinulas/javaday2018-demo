@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-public class RedisQueue implements Queue, AutoCloseable {
+class RedisQueue implements Queue, AutoCloseable {
     private static final Logger logger = LoggerFactory.getLogger(RedisQueue.class);
     private final String host;
     private final int port;
@@ -19,13 +19,13 @@ public class RedisQueue implements Queue, AutoCloseable {
 
     private JedisPool pool;
 
-    public RedisQueue(String host, int port, String name) {
+    RedisQueue(String host, int port, String name) {
         this.host = host;
         this.port = port;
         this.queueName = name;
     }
 
-    public void connect() {
+    void connect() {
         pool = new JedisPool(new JedisPoolConfig(), host, port);
         logger.info("RedisQueue is ready. Connected to {}:{}", host, port);
     }
