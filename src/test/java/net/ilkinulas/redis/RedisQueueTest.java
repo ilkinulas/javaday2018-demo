@@ -1,7 +1,7 @@
 package net.ilkinulas.redis;
 
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.GenericContainer;
 
@@ -18,8 +18,8 @@ public class RedisQueueTest {
 
     private RedisQueue queue;
 
-    @ClassRule
-    public static GenericContainer redisServer = new GenericContainer("redis:4.0.8-alpine");
+    @Rule
+    public GenericContainer redisServer = new GenericContainer("redis:4.0.8-alpine");
     //docker run -d --rm --publish-all redis:4.0.8-alpine
     //docker stop $container_id
 
