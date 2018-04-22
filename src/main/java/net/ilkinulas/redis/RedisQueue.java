@@ -41,18 +41,7 @@ class RedisQueue implements Queue, AutoCloseable {
             return redis.lpop(queueName);
         }
     }
-
-    @Override
-    public List<String> poll(int count) {
-        try (Jedis redis = pool.getResource()) {
-            Transaction tx = redis.multi();
-            Response<List<String>> response = tx.lrange(queueName, 0, count - 1);
-            tx.ltrim(queueName, count, -1);
-            tx.exec();
-            return response.get();
-        }
-    }
-
+    
     @Override
     public long size() {
         try (Jedis redis = pool.getResource()) {
@@ -71,6 +60,17 @@ class RedisQueue implements Queue, AutoCloseable {
     public long add(List<String> l) {
         try (Jedis redis = pool.getResource()) {
             return redis.rpush(queueName, l.toArray(new String[l.size()]));
+        }
+    }
+
+    @Override
+    public List<String> poll(int count) {
+        try (Jedis redis = pool.getResource()) {
+            Transaction tx = redis.multi();
+            Response<List<String>> response = tx.lrange(queueName, 0, count - 1);
+            tx.ltrim(queueName, count, -1);
+            tx.exec();
+            return response.get();
         }
     }
 
