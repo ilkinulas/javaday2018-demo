@@ -66,6 +66,6 @@ task duplicateTests {
     }
 }
 
-test {
-    maxParallelForks = Runtime.runtime.availableProcessors()
-}
+//test {
+//    maxParallelForks = Runtime.runtime.availableProcessors()
+//}
